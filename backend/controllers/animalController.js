@@ -7,7 +7,7 @@ const animalController = {
         const { name, species, breed, age, size, temperament, healthStatus, vaccinated, spayedNeutered, adoptionFee, description } = req.body;
         
         const newAnimal = new Animal({
-            name, species, breed, age, size, temperament, healthStatus, vaccinated, spayedNeutered, adoptionFee, description, photos:req.file.path, listedBy:req.user.id
+            name, species, breed, age, size, temperament, healthStatus, vaccinated, spayedNeutered, adoptionFee, description, photos:req.files, listedBy:req.user.id
         });
         
         await newAnimal.save();
