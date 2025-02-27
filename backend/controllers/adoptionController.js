@@ -1,5 +1,42 @@
 const Adoption = require('../models/adoptionModel'); // Adjust path as necessary
 const asyncHandler = require('express-async-handler');
+const Animal = require('../models/animalModel');
+
+function calculateMatch(adopter, pet) {
+    let score = 0;
+
+    // Match species (e.g., dog vs dog, cat vs cat)
+    if (adopter.desiredPetCharacteristics.includes(pet.species)) {
+        score += 10; // 10 points for species match
+    }
+
+    // Match size (small, medium, large)
+    if (adopter.desiredPetCharacteristics.includes(pet.size)) {
+        score += 10; // 10 points for size match
+    }
+
+    // Match temperament (e.g., calm, playful)
+    if (adopter.lifestyleInfo.includes(pet.temperament)) {
+        score += 10; // 10 points for temperament match
+    }
+
+    // Experience with pets
+    if (adopter.experienceWithPets === 'first-time' && pet.age <= 5) {
+        score += 5; // First-time owners may prefer younger pets
+    }
+
+    // Match health status (if the adopter wants a pet with specific health needs)
+    if (adopter.lifestyleInfo.includes(pet.healthStatus)) {
+        score += 5; // 5 points for health status match
+    }
+
+    // Match vaccination status (if relevant to adopter preferences)
+    if (adopter.lifestyleInfo.includes(pet.vaccinated ? 'vaccinated' : 'unvaccinated')) {
+        score += 5;
+    }
+
+    return score;
+}
 
 // Adoption Controller
 const adoptionController = {
@@ -121,6 +158,19 @@ const adoptionController = {
             res.status(500).json({ message: 'Server error', error });
         }
     }),
+
+    findBestMatches: asyncHandler(async (req, res) => {
+        const adopter = await Adoption.findOne({ applicantId: req.user.id });
+        const pets = await Animal.find({ status: 'available' });    
+        const matches = pets.map(pet => {
+            return {
+                pet,
+                score: calculateMatch(adopter, pet)
+            }
+        });    
+        matches.sort((a, b) => b.score - a.score);    
+        return res.send(matches);
+    })
 };
 
 module.exports = adoptionController;

@@ -7,6 +7,7 @@ adoptionRoutes.post("/add", userAuthentication,adoptionController.createApplicat
 adoptionRoutes.put("/edit", userAuthentication,adoptionController.updateApplicationStatus);
 adoptionRoutes.get("/viewall", userAuthentication,adoptionController.getApplicationsByShelter);
 adoptionRoutes.get("/search", userAuthentication,adoptionController.getApplicationById);
+adoptionRoutes.get("/matches", userAuthentication,adoptionController.findBestMatches);
 adoptionRoutes.delete("/delete", userAuthentication,adoptionController.deleteApplication);
 
 module.exports = adoptionRoutes;

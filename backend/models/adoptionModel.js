@@ -8,8 +8,7 @@ const adoptionSchema = new mongoose.Schema({
     },
     animalId: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Animal', 
-        required: true 
+        ref: 'Animal'
     },
     lifestyleInfo: { 
         type: String 
