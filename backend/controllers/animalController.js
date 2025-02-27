@@ -4,10 +4,11 @@ const asyncHandler = require('express-async-handler');
 const animalController = {
     // Add new animal listing
     createListing: asyncHandler(async (req, res) => {
-        const { name, species, breed, age, size, temperament, healthStatus, vaccinated, spayedNeutered, adoptionFee, description } = req.body;
+        const { name, species, breed, age, size, temperament, healthStatus, vaccinated, spayedNeutered, adoptionFee, description, listedByIndividual, shelterId } = req.body;
         
         const newAnimal = new Animal({
-            name, species, breed, age, size, temperament, healthStatus, vaccinated, spayedNeutered, adoptionFee, description, photos:req.files, listedBy:req.user.id
+            name, shelterId, species, breed, age, size, temperament, healthStatus, vaccinated, spayedNeutered, adoptionFee, description, photos:req.files, listedByIndividual, // Indicating this pet is listed by an individual
+            listedBy: req.user.id,
         });
         
         await newAnimal.save();
@@ -45,8 +46,7 @@ const animalController = {
         res.send({ animals });
     }),
     
-
-    // Edit pet details (shelter/individual)
+        // Edit pet details (shelter/individual)
     updateListing: asyncHandler(async (req, res) => {
         const { id } = req.body;
         const updatedAnimal = await Animal.findByIdAndUpdate(id, req.body, { new: true });

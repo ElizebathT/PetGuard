@@ -64,6 +64,25 @@ const shelterController = {
         const profiles = await Shelter.find({ verificationStatus: 'Verified' });
         res.status(200).json(profiles);
     }),
+
+    getAnimalsByShelter: asyncHandler(async (req, res) => {
+        const { shelterId } = req.body;
+    
+        if (!shelterId) {
+            res.status(400);
+            throw new Error('Shelter ID is required');
+        }
+    
+        const animals = await Animal.find({ shelterId });
+    
+        if (!animals.length) {
+            res.status(404);
+            throw new Error('No animals found in this shelter');
+        }
+    
+        res.send({ animals });
+    }),
+    
 };
 
 module.exports = shelterController;

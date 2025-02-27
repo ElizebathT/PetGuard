@@ -8,6 +8,7 @@ shelterRoutes.post("/add", userAuthentication,upload.single("facilityImages"),sh
 shelterRoutes.put("/edit", userAuthentication,shelterController.updateProfile);
 shelterRoutes.get("/viewall", userAuthentication,shelterController.getVerifiedProfiles);
 shelterRoutes.get("/search", userAuthentication,shelterController.getProfileById);
+shelterRoutes.get("/animals", userAuthentication,shelterController.getAnimalsByShelter);
 shelterRoutes.delete("/delete", userAuthentication,shelterController.deleteProfile);
 
 module.exports = shelterRoutes;
