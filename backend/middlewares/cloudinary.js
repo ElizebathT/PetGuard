@@ -9,14 +9,18 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: "images",
-    allowed_formats: ["jpeg", "png", "jpg"],
-  },
+const upload = multer({
+  storage: new CloudinaryStorage({
+    cloudinary,
+    params: async (req, file) => {
+      return {
+        folder: file.fieldname === "image" ? "images" : "videos",
+        resource_type: file.fieldname === "image" ? "image" : "video",
+        allowed_formats: file.fieldname === "image" ? ["jpeg", "png", "jpg", "webp"] : ["mp4", "mov", "avi", "mkv"],
+      };
+    },
+  }),
 });
 
-const upload = multer({ storage });
 
-module.exports =  upload 
+module.exports = { upload };
