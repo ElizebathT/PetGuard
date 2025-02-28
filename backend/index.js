@@ -9,12 +9,12 @@ const router = require("./routes");
 
 const app = express();
 connectDB()
-app.use(express.json());
+app.use(cors());
 app.use(cookieParser())
 
 app.use(router)
 
-app.use(cors());
+
 app.use(errorHandler)
 
 

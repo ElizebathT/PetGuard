@@ -6,7 +6,12 @@ const adoptionRoutes = require("./adoptionRouter");
 const contractRoutes = require("./adoptionContractRouter");
 const clinicRoutes = require("./clinicRouter");
 const medicalRoutes = require("./medicalRecordRouter");
+const paymentRoutes = require("./paymentRoutes");
 const router=express()
+
+router.use("/payment", paymentRoutes);
+
+router.use(express.json())
 
 router.use("/users", userRoutes);
 router.use("/animals", animalRoutes);
@@ -15,5 +20,6 @@ router.use("/adoption", adoptionRoutes);
 router.use("/contract", contractRoutes);
 router.use("/clinic", clinicRoutes);
 router.use("/records", medicalRoutes);
+
 
 module.exports=router
