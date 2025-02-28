@@ -10,6 +10,7 @@ const paymentRoutes = require("./paymentRoutes");
 const resourceRouter = require("./resourceRouter");
 const adminRoutes = require("./adminRouter");
 const lostFoundRoutes = require("./lostFoundRoutes");
+const communityRoutes = require("./communityRouter");
 const router=express()
 
 router.use("/payment", paymentRoutes);
@@ -26,5 +27,6 @@ router.use("/records", medicalRoutes);
 router.use("/resources", resourceRouter);
 router.use("/admin", adminRoutes);
 router.use("/lostfound", lostFoundRoutes);
+router.use("/community", communityRoutes);
 
 module.exports=router
