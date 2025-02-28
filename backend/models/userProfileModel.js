@@ -35,6 +35,7 @@ const userProfileSchema = new mongoose.Schema({
         hasOtherPets: { type: Boolean, default: false },
         activityLevel: { type: String, trim: true } // e.g., "Active", "Moderate", "Low-energy"
     },
+    wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Animal' }] 
 });
 
 const UserProfile = mongoose.model('UserProfile', userProfileSchema);

@@ -54,6 +54,55 @@ const userProfileController = {
 
         res.json({ message: 'User profile deleted successfully' });
     }),
+
+    getWishlist: asyncHandler(async (req, res) => {
+        const userProfile = await UserProfile.findOne({ user: req.user.id }).populate('wishlist');
+
+        if (!userProfile) {
+            res.status(404);
+            throw new Error('User profile not found');
+        }
+
+        res.json({ wishlist: userProfile.wishlist });
+    }),
+
+    addToWishlist: asyncHandler(async (req, res) => {
+        const { animalId } = req.body;
+
+        const userProfile = await UserProfile.findOne({ user: req.user.id });
+
+        if (!userProfile) {
+            res.status(404);
+            throw new Error('User profile not found');
+        }
+
+        // Check if the item is already in the wishlist
+        if (userProfile.wishlist.includes(animalId)) {
+            res.status(400);
+            throw new Error('Item already in wishlist');
+        }
+
+        userProfile.wishlist.push(animalId);
+        await userProfile.save();
+
+        res.json({ message: 'Item added to wishlist', wishlist: userProfile.wishlist });
+    }),
+
+    removeFromWishlist: asyncHandler(async (req, res) => {
+        const { animalId } = req.body;
+
+        const userProfile = await UserProfile.findOne({ user: req.user.id });
+
+        if (!userProfile) {
+            res.status(404);
+            throw new Error('User profile not found');
+        }
+
+        userProfile.wishlist = userProfile.wishlist.filter(id => id.toString() !== animalId);
+        await userProfile.save();
+
+        res.json({ message: 'Item removed from wishlist', wishlist: userProfile.wishlist });
+    }),
 };
 
 module.exports = userProfileController;
