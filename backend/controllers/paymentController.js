@@ -9,7 +9,7 @@ const paymentController = {
     // Get all payments for a user
     getPayments: asyncHandler(async (req, res) => {
         const adoptions = await Adoption.find({ applicantId: req.user.id });
-        const payments = await Payment.find({ adopterId: { $in: adoptions.map(adoption => adoption._id) } }).populate('adadopterId');
+        const payments = await Payment.find({ adopterId: { $in: adoptions.map(adoption => adoption._id) } }).populate('adadopterId').sort({ createdAt: -1 });
         res.json(payments);
     }),
 

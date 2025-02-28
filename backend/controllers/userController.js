@@ -65,7 +65,7 @@ const userController={
         }),
 
     profile: asyncHandler(async (req, res) => {
-        const { username, email, password, role, phone, address } = req.body;
+        const { username, email, password, phone, address } = req.body;
         const userId = req.user.id;         
             const user = await User.findById(userId);
             if (!user) {
@@ -76,7 +76,6 @@ const userController={
             }
             user.username = username || user.username;
             user.email = email || user.email;
-            user.role = role || user.role;
             user.phone = phone || user.phone;
             user.address = address || user.address;
             user.profilePic = profilePic || user.profilePic;

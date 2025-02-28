@@ -22,5 +22,7 @@ router.use("/contract", contractRoutes);
 router.use("/clinic", clinicRoutes);
 router.use("/records", medicalRoutes);
 router.use("/resources", resourceRouter);
+router.use("/admin", adoptionRoutes);
+
 
 module.exports=router
