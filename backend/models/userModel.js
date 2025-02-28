@@ -20,15 +20,9 @@ const UserSchema = new mongoose.Schema({
     enum: ["shelter", "rescue", "individual", "admin"], 
     required: true 
   },
-  phone: { 
-      type: String,
-  },
   isApproved: { 
     type: Boolean, 
     default: false 
-  },
-  address:{ 
-      type:  String,
   },
 }, { timestamps: true });
 

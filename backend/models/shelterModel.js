@@ -49,7 +49,7 @@ const shelterSchema = new mongoose.Schema({
         { 
             type: String 
         }
-    ], // Array of image URLs
+    ], 
     verificationStatus: { 
         type: String, 
         enum: ['Pending', 'Verified', 'Rejected'], 
