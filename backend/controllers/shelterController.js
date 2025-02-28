@@ -1,3 +1,4 @@
+const Animal = require('../models/animalModel');
 const Shelter = require('../models/shelterModel');
 const asyncHandler = require('express-async-handler');
 
@@ -22,7 +23,8 @@ const shelterController = {
     }),
 
     getProfileById: asyncHandler(async (req, res) => {
-        const profile = await Shelter.findById(req.params.id).populate('userId', 'name email');
+        const {id}=req.body
+        const profile = await Shelter.findById(id).populate('userId', 'name email');
 
         if (!profile) {
             res.status(404);
@@ -34,7 +36,8 @@ const shelterController = {
 
     // Update Shelter/Rescue Profile
     updateProfile: asyncHandler(async (req, res) => {
-        const profile = await Shelter.findById(req.params.id);
+        const {id}=req.body
+        const profile = await Shelter.findById(id);
 
         if (!profile) {
             res.status(404);
@@ -48,7 +51,8 @@ const shelterController = {
 
     // Delete Shelter/Rescue Profile
     deleteProfile: asyncHandler(async (req, res) => {
-        const profile = await Shelter.findById(req.params.id);
+        const {id}=req.body
+        const profile = await Shelter.findById(id);
 
         if (!profile) {
             res.status(404);

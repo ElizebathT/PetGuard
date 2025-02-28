@@ -8,6 +8,8 @@ const clinicRoutes = require("./clinicRouter");
 const medicalRoutes = require("./medicalRecordRouter");
 const paymentRoutes = require("./paymentRoutes");
 const resourceRouter = require("./resourceRouter");
+const adminRoutes = require("./adminRouter");
+const lostFoundRoutes = require("./lostFoundRoutes");
 const router=express()
 
 router.use("/payment", paymentRoutes);
@@ -22,7 +24,7 @@ router.use("/contract", contractRoutes);
 router.use("/clinic", clinicRoutes);
 router.use("/records", medicalRoutes);
 router.use("/resources", resourceRouter);
-router.use("/admin", adoptionRoutes);
-
+router.use("/admin", adminRoutes);
+router.use("/lostfound", lostFoundRoutes);
 
 module.exports=router
