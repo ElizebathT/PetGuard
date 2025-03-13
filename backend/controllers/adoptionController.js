@@ -1,6 +1,7 @@
 const Adoption = require('../models/adoptionModel'); // Adjust path as necessary
 const asyncHandler = require('express-async-handler');
 const Animal = require('../models/animalModel');
+const Notification = require('../models/notificationModel');
 
 function calculateMatch(adopter, pet) {
     let score = 0;
@@ -41,32 +42,56 @@ function calculateMatch(adopter, pet) {
 // Adoption Controller
 const adoptionController = {
     // Create a new adoption application
-    createApplication: asyncHandler(async (req, res) => {
-        try {
-            const { animalId, lifestyleInfo, livingSituation, experienceWithPets, desiredPetCharacteristics, shelterId, notes } = req.body;
-            const pet = await Animal.findById(animalId);
-            // Create a new adoption application
-            const newApplication = new Adoption({
-                applicantId:req.user.id,
-                animalId,
-                lifestyleInfo,
-                livingSituation,
-                experienceWithPets,
-                desiredPetCharacteristics,
-                shelterId,
-                notes,
-                rehomingIndividualId: pet.listedBy
-            });
+    
 
-            // Save the new adoption application
-            await newApplication.save();
+createApplication: asyncHandler(async (req, res) => {
+    try {
+        const { animalId, lifestyleInfo, livingSituation, experienceWithPets, desiredPetCharacteristics, shelterId, notes } = req.body;
+        const pet = await Animal.findById(animalId);
 
-            res.status(201).json({ message: 'Adoption application created successfully', application: newApplication });
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Server error', error });
+        if (!pet) {
+            return res.status(404).json({ message: "Pet not found" });
         }
-    }),
+
+        // Create a new adoption application
+        const newApplication = new Adoption({
+            applicantId: req.user.id,
+            animalId,
+            lifestyleInfo,
+            livingSituation,
+            experienceWithPets,
+            desiredPetCharacteristics,
+            shelterId,
+            notes,
+            rehomingIndividualId: pet.listedBy
+        });
+
+        // Save the adoption application
+        await newApplication.save();
+
+        // Determine the recipient of the notification
+        const recipientId = shelterId || pet.listedBy; // Either the shelter or the individual who listed the pet
+
+        // Create a new notification
+        const notification = new Notification({
+            user: recipientId,
+            message: `New adoption application received for ${pet.name}.`,
+        });
+
+        // Save the notification
+        await notification.save();
+
+        res.status(201).json({ 
+            message: 'Adoption application created successfully', 
+            application: newApplication 
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error', error });
+    }
+}),
+
 
     // Get all adoption applications for a shelter
     getApplicationsByShelter: asyncHandler(async (req, res) => {
@@ -130,7 +155,12 @@ const adoptionController = {
             application.notes = notes || application.notes;
 
             await application.save();
-
+            const notification = new Notification({
+                user: application.applicantId,
+                message: `Your adoption application for pet has been ${adoptionStatus.toLowerCase()}.`
+            });
+    
+            await notification.save();
             res.status(200).json({ message: 'Adoption application updated successfully', application });
         } catch (error) {
             console.error(error);

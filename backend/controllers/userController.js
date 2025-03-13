@@ -26,18 +26,12 @@ const userController={
           id:userCreated.id
       }
       const token=jwt.sign(payload,process.env.JWT_SECRET_KEY)
-      res.cookie("token",token,{
-          maxAge:2*24*60*60*1000,
-          http:true,
-          sameSite:"none",
-          secure:false
-      })
-      res.send("User created successfully")
+      res.json({token,role})
         }),  
   
     login :asyncHandler(async(req,res)=>{
-        const {email,password}=req.body
-        const userExist=await User.findOne({email})
+        const {username,password}=req.body
+        const userExist=await User.findOne({username})
         if(!userExist){
             throw new Error("User not found")
         }
@@ -46,17 +40,12 @@ const userController={
             throw new Error("Passwords not matching")
         }
         const payload={
-            email:userExist.email,
+            username:userExist.username,
             id:userExist.id
         }
-        const token=jwt.sign(payload,process.env.JWT_SECRET_KEY)
-        res.cookie("token",token,{
-            maxAge:2*24*60*60*1000,
-            sameSite:"none",
-            http:true,
-            secure:false
-        })        
-        res.send("Login successful")
+        const token=jwt.sign(payload,process.env.JWT_SECRET_KEY)      
+        const role=userExist.role
+        res.json({token,role})
         }),
 
     logout:asyncHandler(async(req,res)=>{
@@ -97,6 +86,71 @@ const userController={
             message: "User details retrieved successfully",
             user
         });
-    })
+    }),
+
+    forgotPassword: asyncHandler(async (req, res) => {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Generate Reset Token
+        const resetToken = crypto.randomBytes(32).toString("hex");
+        const hashedToken = await bcrypt.hash(resetToken, 10);
+        
+        user.resetPasswordToken = hashedToken;
+        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour expiry
+        await user.save();
+
+        // Send Email
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+            },
+        });
+
+        const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}&email=${email}`;
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: "Password Reset Request",
+            text: `Click on this link to reset your password: ${resetLink}`,
+        };
+
+        transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ message: "Email could not be sent" });
+            }
+            res.json({ message: "Reset link sent to your email" });
+        });
+    }),
+
+    // Reset Password - Verifies Token & Updates Password
+    resetPassword: asyncHandler(async (req, res) => {
+        const { email, token, newPassword } = req.body;
+        const user = await User.findOne({ email });
+
+        if (!user || !user.resetPasswordToken) {
+            return res.status(400).json({ message: "Invalid or expired token" });
+        }
+
+        const isTokenValid = await bcrypt.compare(token, user.resetPasswordToken);
+        if (!isTokenValid || user.resetPasswordExpires < Date.now()) {
+            return res.status(400).json({ message: "Invalid or expired token" });
+        }
+
+        user.password = await bcrypt.hash(newPassword, 10);
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+        await user.save();
+
+        res.json({ message: "Password reset successful" });
+    }),
 }
 module.exports=userController

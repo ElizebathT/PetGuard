@@ -9,7 +9,14 @@ const router = require("./routes");
 
 const app = express();
 connectDB()
-app.use(cors());
+
+const allowedOrigins = ["http://localhost:5173"];
+
+app.use(cors({
+    origin: allowedOrigins, 
+    credentials: true, 
+}));
+
 app.use(cookieParser())
 
 app.use(router)

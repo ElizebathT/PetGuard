@@ -7,7 +7,9 @@ profileRoutes.put("/save", userAuthentication,userProfileController.createOrUpda
 profileRoutes.put("/add", userAuthentication,userProfileController.addToWishlist);
 profileRoutes.put("/remove", userAuthentication,userProfileController.removeFromWishlist);
 profileRoutes.get("/edit", userAuthentication,userProfileController.getProfile);
+profileRoutes.put("/password", userAuthentication,userProfileController.changePassword);
 profileRoutes.get("/wishlist", userAuthentication,userProfileController.getWishlist);
 profileRoutes.delete("/delete",userAuthentication,userProfileController.deleteProfile);
+
 
 module.exports = profileRoutes;

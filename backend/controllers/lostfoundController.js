@@ -1,5 +1,6 @@
 const LostFound = require('../models/lostFoundModel');
 const asyncHandler = require('express-async-handler');
+const Notification = require('../models/notificationModel');
 
 const lostFoundController = {
     createReport: asyncHandler(async (req, res) => {
@@ -17,7 +18,10 @@ const lostFoundController = {
             dateLostOrFound,
             contact,
         });
-
+        await Notification.create({
+            user: req.user.id,
+            message: `Your lost/found pet report has been submitted successfully.`,
+        });
         res.status(201).json(report);
     }),
 

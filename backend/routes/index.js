@@ -12,6 +12,7 @@ const adminRoutes = require("./adminRouter");
 const lostFoundRoutes = require("./lostFoundRoutes");
 const communityRoutes = require("./communityRouter");
 const profileRoutes = require("./userProfileRouter");
+const notificationRouter = require("./notificationRoutes");
 const router=express()
 
 router.use("/payment", paymentRoutes);
@@ -30,5 +31,6 @@ router.use("/admin", adminRoutes);
 router.use("/lostfound", lostFoundRoutes);
 router.use("/community", communityRoutes);
 router.use("/profile", profileRoutes);
+router.use("/notification", notificationRouter);
 
 module.exports=router
