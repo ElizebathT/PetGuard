@@ -30,10 +30,10 @@ const Login = () => {
     onSubmit: async (values, action) => {
       try {              
         
-          const data = await mutateAsync(values);     
-        if (data?.token) {
-            localStorage.setItem("userToken", data.token);
-            const decodedData = jwtDecode(data.token);
+          const token = await mutateAsync(values);     
+        if (token) {
+            localStorage.setItem("userToken", token);
+            const decodedData = jwtDecode(token);
             dispatch(loginUserAction(decodedData));
             setSuccessMessage("Login Successful!");
             action.resetForm();

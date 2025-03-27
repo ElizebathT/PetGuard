@@ -1,24 +1,39 @@
 import {createSlice} from '@reduxjs/toolkit'
-import { userData } from '../utiles/storageHandler';
+import { decodedData, getToken, userData } from '../utiles/storageHandler';
+
 
 export const AuthSlice= createSlice({
   name:"authSlice",
   initialState:{
-      user:userData || null
+      name:decodedData()?.name || null,
+      id:decodedData()?.id || null,
+      role:decodedData()?.role || null,
+      email:decodedData()?.email || null,
+      isLogin:getToken() ? true : false
   },
   reducers:{
       loginUserAction:((state,action)=>{
-        console.log(action);
-        
-          state.user = action.payload
+         state.name = action.payload.name
+         state.email = action.payload.email
+         state.id = action.payload.id
+         state.role = action.payload.role
+         state.isLogin = true
       }),
       registerUserAction:((state,action)=>{
 
-          state.user = action.payload
+        state.name = action.payload.name
+        state.email = action.payload.email
+        state.id = action.payload.id
+        state.role = action.payload.role
+        state.isLogin = true
         
       }),
       logoutAction: (state, action) => {
-        state.user = null;
+        state.name = null
+        state.email = null
+        state.id = null
+        state.role = null
+        state.isLogin = false
       }
   }
 })
