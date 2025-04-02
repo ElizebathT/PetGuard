@@ -1,6 +1,7 @@
 const AdoptionContract = require('../models/adoptionContractModel');
 const asyncHandler = require('express-async-handler');
 const Adoption = require('../models/adoptionModel');
+const Animal = require('../models/animalModel');
 
 const adoptionContractController = {
     // Add new adoption contract
@@ -57,6 +58,13 @@ const adoptionContractController = {
         if (signedByShelter) adoptionContract.signedByShelter = signedByShelter;
         if (signatureDate) adoptionContract.signatureDate = signatureDate;
         await adoptionContract.save();
+        if (adoptionContract.signedByAdopter && adoptionContract.signedByShelter) {
+            const animal = await Animal.findById(adoptionContract.animalId);
+            if (animal) {
+                animal.available = false;
+                await animal.save();
+            }
+        }
         res.status(200).json(adoptionContract);
     }),
 

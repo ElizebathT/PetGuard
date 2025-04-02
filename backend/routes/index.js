@@ -12,6 +12,7 @@ const adminRoutes = require("./adminRouter");
 const lostFoundRoutes = require("./lostFoundRoutes");
 const communityRoutes = require("./communityRouter");
 const notificationRouter = require("./notificationRoutes");
+const complaintRouter = require("./complaintRoutes");
 const router=express()
 
 router.use("/payment", paymentRoutes);
@@ -19,6 +20,7 @@ router.use("/payment", paymentRoutes);
 router.use(express.json())
 
 router.use("/users", userRoutes);
+router.use("/complaints", complaintRouter);
 router.use("/animals", animalRoutes);
 router.use("/shelter", shelterRoutes);
 router.use("/adoption", adoptionRoutes);

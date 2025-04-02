@@ -65,6 +65,10 @@ const animalSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'MedicalRecord'
     },
+    available:{
+        type:Boolean,
+        default:true
+    },
     listedByIndividual: { 
         type: Boolean, 
         default: false // Set this to true if the pet is being rehomed by an individual 
